@@ -12,4 +12,4 @@ Key Features:
 
 
 
-For more information, documentation, and usage examples, visit the GitHub repository: [<link-to-your-repository>](https://github.com/gitagogaming/AnimazePy/)https://github.com/gitagogaming/AnimazePy/
+For more information, documentation, and usage examples, visit the GitHub repository: (https://github.com/gitagogaming/AnimazePy/)https://github.com/gitagogaming/AnimazePy/
