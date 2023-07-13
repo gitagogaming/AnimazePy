@@ -10,6 +10,10 @@ Key Features:
 - Select idle animations, scenes, emotes, and special actions
 - and more!
 
+# How to enable the Websocket API in Animaze
+![animaze_enable_api](https://github.com/gitagogaming/AnimazePy/assets/76603653/3696017d-2d71-4a32-9f19-fada92ab87e9)
 
 
-For more information, documentation, and usage examples, visit the GitHub repository: https://github.com/gitagogaming/AnimazePy/)https://github.com/gitagogaming/AnimazePy/
+
+For more information, documentation, and usage examples, visit the GitHub repository: https://github.com/gitagogaming/AnimazePy/
+
