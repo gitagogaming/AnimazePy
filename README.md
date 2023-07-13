@@ -17,6 +17,8 @@ Key Features:
 
 For more information, documentation, and usage examples, visit the GitHub repository: https://github.com/gitagogaming/AnimazePy/
 
+<br>
+<br>
+<br>
 
-
-Special Thanks to [@Killerboss2019](https://github.com/Killerboss2019) for helping me get this published to Pypi and for all the help and guidance throughtout my Python journey.
+<i> Special Thanks to [@Killerboss2019](https://github.com/Killerboss2019) for helping me get this published to Pypi and for all the help and guidance throughtout my Python journey. </i>
