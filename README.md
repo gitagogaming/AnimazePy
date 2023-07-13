@@ -17,3 +17,6 @@ Key Features:
 
 For more information, documentation, and usage examples, visit the GitHub repository: https://github.com/gitagogaming/AnimazePy/
 
+
+
+Special Thanks to @KillerBOSS2019 for helping me get this published to Pypi and for all the help and guidance throughtout my Python journey.
