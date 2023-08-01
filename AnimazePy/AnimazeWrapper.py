@@ -55,7 +55,6 @@ class AnimazeWrapper:
             return
  
 
-
     def disconnect(self):
         if self.ws is not None:
             self.ws.close()
@@ -66,10 +65,12 @@ class AnimazeWrapper:
             self.logger.error("No WebSocket connection to close.")
             return "No WebSocket connection to close."
 
+
     def send_command(self, command):
         try:
             if self.ws is None:
-                self.logger.error("WebSocket connection is not open. Call 'open_websocket' first.")
+                self.logger.error("WebSocket connection is not open. Must connect first.")
+                self.connect()
                 return
 
             self.ws.send(json.dumps(command))
@@ -77,8 +78,21 @@ class AnimazeWrapper:
             return json.loads(response)
         except Exception as e:
             self.logger.error('Failed to send command due to: ' + str(e))
+            self.ws = None
+    
 
 
+    def send_chatpal_message(self, message:str):
+        """
+        Send a prompt to Animaze ChatPal, and receive the conversational AI response, while the avatar starts speaking. 
+        
+        """
+        command = {
+            "action": "ChatbotSendMessage",
+            "id": self.dev_name,                 
+            "message": message
+        }
+        return self.send_command(command)
     
     def get_item_icon(self, avatar_name:str):
         command = {
@@ -142,6 +156,20 @@ class AnimazeWrapper:
         }
         return self.send_command(command)
 
+    def get_camera_transform(self):
+        command = {
+            "action": "GetCameraTransform",
+        }
+        return self.send_command(command)
+    
+    def set_camera_transform(self, pos_x:float, pos_y:float, pos_z:float, rot_x:float, rot_y:float, rot_z:float, rot_w:float):
+        command = {
+            "action": "SetCameraTransform",
+            "position":[pos_x, pos_y, pos_z],
+            "rotation":[rot_x, rot_y, rot_z, rot_w]
+        }
+        return self.send_command(command)
+
     def broadcast(self, choice:bool):
         command = {
             "action": "Broadcast",
@@ -154,15 +182,15 @@ class AnimazeWrapper:
         command = {
             "action": "TriggerSpecialAction",
             "id": self.dev_name,
-             "index": index
+            "index": index
            }
         return self.send_command(command)
     
     def trigger_idle_anim(self, index:int):
         command = {
-            "action": "SelectIdleAnim",
+            "action": "TriggerIdle",
             "id": self.dev_name,
-            "animName": index
+            "index": index
         }
         return self.send_command(command)
     
@@ -187,14 +215,14 @@ class AnimazeWrapper:
     def get_scenes(self):
         command = { 
             "action": "GetScenes",
-            "id": "MyDevName" 
+            "id": self.dev_name
         }
         return self.send_command(command)
     
     def get_quickscenes(self):
         command = { 
             "action": "GetQuickscenes",
-            "id": "MyDevName" 
+            "id": self.dev_name
         }
         return self.send_command(command)
 
@@ -210,7 +238,6 @@ class AnimazeWrapper:
     def load_quick_scene(self, scene_index:int):
         command = {
             "action": "LoadQuickscene",
-            "id": self.dev_name,
             "index": scene_index
         }
         return self.send_command(command)
@@ -254,58 +281,70 @@ class AnimazeWrapper:
             "action": "SetOverride",           
             "behavior": "Look At Camera",            
             "value": choice
-            ## "range": 0.5
         }
         return self.send_command(command)
     
 
-    def mousekeyboard_behavior(self, choice:bool, keyboardScale, handToKeyboardDist, xOffset, yOffset, zOffset):
-        """ NO idea what this does or how to use it """
-
+    def look_at_camera_head(self, choice:bool):
         command = {
-            "action": "SetOverride",                    # required (string) 
-            "behavior": "Mouse Keyboard Behavior",      # required (string)
-            "value": choice,                            # required (bool)
-            "keyboardScale": keyboardScale,             # optional (float)
-            "handToKeyboardDist": handToKeyboardDist,   # optional (float)
-            "xAxisOffset": xOffset,                     # optional (float)
-            "yAxisOffset": yOffset,                     # optional (float)
-            "zAxisOffset ": zOffset                     # optional (float)
+            "action": "SetOverride",           
+            "behavior": "Look At Camera Head",            
+            "value": choice
+        }
+        return self.send_command(command)
+
+    
+
+    def mousekeyboard_behavior(self, choice:bool, keyboardScale:float, handToKeyboardDist:float, xOffset:float, yOffset:float, zOffset:float):
+        command = {
+            "action": "SetOverride",                   
+            "behavior": "Mouse Keyboard Behavior",     
+            "value": choice,                           
+            "keyboardScale": keyboardScale,            
+            "handToKeyboardDist": handToKeyboardDist,  
+            "xAxisOffset": xOffset,                    
+            "yAxisOffset": yOffset,                    
+            "zAxisOffset ": zOffset                    
         }
         return self.send_command(command)
 
 
     def follow_mouse(self, choice:bool):
-        """ NO idea what this does or how to use it """
         command ={
-            "action": "SetOverride",            # required (string) 
-            "behavior": "Follow Mouse Cursor",  # required (string)
-            "value": choice                     # required (bool)
+            "action": "SetOverride",            
+            "behavior": "Follow Mouse Cursor", 
+            "value": choice                  
         }
         return self.send_command(command)
     
-    def pupil_behavoior(self, value, frequency:float=None):
-        """ Adjust how often the pupils move 
+    def pupil_behavoior(self, value:bool, frequency:float=None):
+        """ 
+        Adjust how often the pupils move 
             - value: True or False
-            - frequency: 0.0 - 1.0
-            """
+            - frequency (optional): 0.0 - 1.0
+        """
         command = {
-            "action": "SetOverride",          # required (string) 
-            "behavior": "Pupil Behavior",     # required (string)
-            "value": value,                   # required (bool)
-            "frequency": frequency            # optional required (float)
+            "action": "SetOverride",          
+            "behavior": "Pupil Behavior",    
+            "value": value,                
+            "frequency": frequency        
         }
         return self.send_command(command)
     
 
-    def breathing_behavior(self, value, amplitude:float, frequency:float):
-        """ Doesnt appear to do much, but does work """
+    def breathing_behavior(self, value:bool, amplitude:float, frequency:float):
+        """ 
+        Adjust how often the pupils move
+            - value: True or False
+            - amplitude(optional): 0.0 - 1.0
+            - frequency(optional): 0.0 - 1.0
+        """
         command = {
-            "action": "SetOverride",          # required (string) 
-            "behavior": "Breathing Behavior", # required (string)
-            "value": value,                   # required (bool)
-            "amplitude": amplitude,           # optional required (float)
-            "frequency": frequency            # optional required (float)
+            "action": "SetOverride",          
+            "behavior": "Breathing Behavior", 
+            "value": value,                  
+            "amplitude": amplitude,           
+            "frequency": frequency            
         }
         return self.send_command(command)
     
